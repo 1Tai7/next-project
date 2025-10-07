@@ -1,21 +1,23 @@
 // src/components/LoginForm.tsx
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginForm() {
   const { login, loading, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const token = await login(email, password);
-      console.log("✅ Token recibido:", token);
-      setSuccess(true);
+      if (token) {
+        navigate("/home"); // ✅ redirección al home
+      }
     } catch {
-      setSuccess(false);
+      // No redirigir si falla
     }
   };
 
@@ -57,11 +59,6 @@ export default function LoginForm() {
 
         {error && (
           <p className="text-red-600 text-sm mt-3 text-center">{error}</p>
-        )}
-        {success && (
-          <p className="text-green-600 text-sm mt-3 text-center">
-            Inicio de sesión exitoso ✅
-          </p>
         )}
       </form>
     </div>
